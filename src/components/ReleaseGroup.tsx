@@ -1,4 +1,7 @@
 // src/components/ReleaseGroup.tsx
+import { Copy, Check } from "lucide-react";
+import { useExport } from "@hooks/useExport";
+
 interface ReleaseGroupProps {
   name: string;
   hasManualRank: boolean;
@@ -10,6 +13,13 @@ const ReleaseGroup = ({
   hasManualRank,
   hasPopularRank,
 }: ReleaseGroupProps) => {
+  const { copied, createSingleFormat, copyToClipboard } = useExport();
+
+  const handleExport = async () => {
+    const format = createSingleFormat(name);
+    await copyToClipboard(format);
+  };
+
   return (
     <div
       className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md 
@@ -22,6 +32,20 @@ const ReleaseGroup = ({
           <h4 className="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-300">
             {name}
           </h4>
+          <button
+            onClick={handleExport}
+            className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 
+                       text-gray-600 dark:text-gray-300
+                       hover:bg-gray-200 dark:hover:bg-gray-600
+                       opacity-0 group-hover:opacity-100
+                       transition-all duration-300"
+          >
+            {copied ? (
+              <Check className="h-4 w-4 text-green-500" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+          </button>
           {(hasManualRank || hasPopularRank) && (
             <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {hasManualRank && (

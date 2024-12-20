@@ -38,7 +38,12 @@ function App() {
       />
       <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-12">
         {Object.entries(activeTiers).map(([tier, groupList]) => (
-          <TierBlock key={tier} tier={tier} groups={groupList} />
+          <TierBlock
+            key={tier}
+            tier={tier}
+            groups={groupList}
+            resolution={activeResolution}
+          />
         ))}
       </main>
     </div>
