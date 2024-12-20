@@ -22,7 +22,8 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/hooks/*"],
+      "@hooks/*": ["src/hooks/*"]
     }
   },
   "include": ["src"]
