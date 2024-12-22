@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import yaml from "js-yaml";
 
 type Resolution = "2160p" | "1080p" | "720p" | "SD";
@@ -22,11 +21,8 @@ interface CacheItem {
   data: GroupsByResolution;
 }
 
-const CACHE_KEY = "github_yml_cache";
+const CACHE_KEY = "local_yml_cache";
 const CACHE_DURATION = 30 * 60 * 1000;
-const GITHUB_API_BASE = "https://api.github.com";
-const REPO_PATH =
-  "repos/Dictionarry-Hub/database/contents/custom_formats?ref=1080p-Encode";
 
 const extractResolutionAndTier = (
   tags: string[]
@@ -81,29 +77,24 @@ export const useGroups = () => {
           }
         }
 
-        console.log("Fetching from GitHub...");
-        const response = await axios.get(`${GITHUB_API_BASE}/${REPO_PATH}`, {
-          headers: {
-            Accept: "application/vnd.github.v3+json",
-          },
-        });
-
-        const yamlFiles = response.data.filter(
-          (file: any) =>
-            file.name.endsWith(".yml") || file.name.endsWith(".yaml")
-        );
+        console.log("Loading from public folder...");
+        const response = await fetch("/database/custom_formats/index.json");
+        const fileList = await response.json();
 
         const yamlContents = await Promise.all(
-          yamlFiles.map(async (file: any) => {
+          fileList.map(async (fileName: string) => {
             try {
-              const contentResponse = await axios.get(file.download_url);
-              const parsedYaml = yaml.load(contentResponse.data);
+              const response = await fetch(
+                `/database/custom_formats/${fileName}`
+              );
+              const yamlText = await response.text();
+              const parsedYaml = yaml.load(yamlText);
               return {
-                name: file.name,
+                name: fileName,
                 content: parsedYaml,
               };
             } catch (error) {
-              console.error(`Error parsing YAML file ${file.name}:`, error);
+              console.error(`Error parsing YAML file ${fileName}:`, error);
               return null;
             }
           })
