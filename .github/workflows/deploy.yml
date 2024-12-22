@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Run when changes are pushed to main
+  push:
+    branches: [main]
+  # Run after our database update workflow completes
+  workflow_run:
+    workflows: ["Update from Database"]
+    types:
+      - completed
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # Only run if triggered by push OR if the database update was successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
+    steps:
+      # Get the code
+      - uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      # Install project dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Build the project
+      - name: Build
+        run: npm run build
+
+      # Deploy to gh-pages branch
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # Deploy the dist folder
