@@ -78,14 +78,16 @@ export const useGroups = () => {
         }
 
         console.log("Loading from public folder...");
-        const response = await fetch("/database/custom_formats/index.json");
+        const response = await fetch(
+          "/groups/database/custom_formats/index.json"
+        );
         const fileList = await response.json();
 
         const yamlContents = await Promise.all(
           fileList.map(async (fileName: string) => {
             try {
               const response = await fetch(
-                `/database/custom_formats/${fileName}`
+                `/groups/database/custom_formats/${fileName}`
               );
               const yamlText = await response.text();
               const parsedYaml = yaml.load(yamlText);
