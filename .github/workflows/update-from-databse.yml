@@ -1,0 +1,45 @@
+name: Update from Database
+on:
+  repository_dispatch:
+    types: [database-updated]
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout groups repository
+        uses: actions/checkout@v3
+
+      - name: Clone database repository
+        run: |
+          git clone -b 1080p-Encode https://github.com/Dictionarry-Hub/database.git temp_database
+
+      - name: Update files
+        run: |
+          # Remove old database directories if they exist
+          rm -rf public/database
+          # Copy database files to public
+          mkdir -p public/database
+          cp -r temp_database/custom_formats public/database/
+          cp -r temp_database/profiles public/database/
+          cp -r temp_database/regex_patterns public/database/
+
+          # Create index.json for custom_formats
+          cd public/database/custom_formats
+          ls *.yml *.yaml | jq -R -s -c 'split("\n")[:-1]' > index.json
+          cd ../../..
+
+          # Clean up temp clone
+          rm -rf temp_database
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update from database repository [automated]"
+          git push
+
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
