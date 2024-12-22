@@ -24,9 +24,10 @@ jobs:
           cp -r temp_database/regex_patterns public/database/
 
           # Create index.json for custom_formats
-          cd public/database/custom_formats
-          ls *.yml *.yaml | jq -R -s -c 'split("\n")[:-1]' > index.json
-          cd ../../..
+          cd public/database/custom_formats && \
+          find . -name "*.yml" -type f -printf "%f\n" | \
+          jq -R -s 'split("\n") | map(select(length > 0))' > index.json && \
+          cd -
 
           # Clean up temp clone
           rm -rf temp_database
