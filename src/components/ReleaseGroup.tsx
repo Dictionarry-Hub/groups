@@ -56,13 +56,6 @@ const ReleaseGroup = ({
             )}
           </button>
         </div>
-
-        <div className="mt-2 flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-400 dark:bg-green-500 transition-colors duration-300" />
-          <span className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-            Active
-          </span>
-        </div>
       </div>
 
       <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
